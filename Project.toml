@@ -3,11 +3,17 @@ uuid = "972ef8a8-2335-4604-a4a0-94f299de4a83"
 authors = ["Jan Weidner <jw3126@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+
 [compat]
 julia = "1"
 
 [extras]
+AxisArrays = "39de3d68-74b9-583c-8d2d-e117c070f3a9"
+AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"
+DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Test", "AxisArrays", "AxisKeys", "DimensionalData"]
