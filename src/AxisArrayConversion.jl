@@ -1,6 +1,6 @@
 module AxisArrayConversion
 using Requires
-export namedtuple, to
+export to
 
 """
     namedtuple(arr)::NamedTuple{(:axes, :values)}

@@ -3,7 +3,7 @@ using Test
 import AxisKeys; const AK = AxisKeys
 import AxisArrays; const AA = AxisArrays
 import DimensionalData; const DD = DimensionalData
-using AxisArrayConversion: axisarray, keyedarray, dimarray
+using AxisArrayConversion: axisarray, keyedarray, dimarray, namedtuple
 
 @testset "conversion" begin
     axs = (a=1:2, b=[10,20, 30])
