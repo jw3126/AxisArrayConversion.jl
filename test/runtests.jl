@@ -1,48 +1,47 @@
-using AxisArrayConversion
+using AxisArrayConversion: to
 using Test
 import AxisKeys; const AK = AxisKeys
 import AxisArrays; const AA = AxisArrays
 import DimensionalData; const DD = DimensionalData
-using AxisArrayConversion: axisarray, keyedarray, dimarray, namedtuple
 
-@testset "conversion" begin
+@testset "to" begin
     axs = (a=1:2, b=[10,20, 30])
     nt = (axes=axs, values=(randn(2,3)))
-    @test nt === namedtuple(nt)
+    @test nt === to(NamedTuple, nt)
 
-    aa = axisarray(nt)
+    aa = to(AA.AxisArray, nt)
     @test aa isa AA.AxisArray
 
-    da = dimarray(nt)
+    da = to(DD.DimArray, nt)
     @test da isa DD.DimArray
 
-    ka = keyedarray(nt)
+    ka = to(AK.KeyedArray, nt)
     @test ka isa AK.KeyedArray
 
-    @test aa == axisarray(aa)
-    @test aa == axisarray(da)
-    @test aa == axisarray(ka)
-    @test aa == axisarray(nt)
+    @test aa == to(AA.AxisArray, aa)
+    @test aa == to(AA.AxisArray, da)
+    @test aa == to(AA.AxisArray, ka)
+    @test aa == to(AA.AxisArray, nt)
 
-    @test da == dimarray(aa)
-    @test da == dimarray(da)
-    @test da == dimarray(ka)
-    @test da == dimarray(nt)
+    @test da == to(DD.DimArray, aa)
+    @test da == to(DD.DimArray, da)
+    @test da == to(DD.DimArray, ka)
+    @test da == to(DD.DimArray, nt)
 
-    @test ka == keyedarray(aa)
-    @test ka == keyedarray(da)
-    @test ka == keyedarray(ka)
-    @test ka == keyedarray(nt)
+    @test ka == to(AK.KeyedArray, aa)
+    @test ka == to(AK.KeyedArray, da)
+    @test ka == to(AK.KeyedArray, ka)
+    @test ka == to(AK.KeyedArray, nt)
 
-    @test nt == namedtuple(aa)
-    @test nt == namedtuple(da)
-    @test nt == namedtuple(ka)
-    @test nt == namedtuple(nt)
+    @test nt == to(NamedTuple, aa)
+    @test nt == to(NamedTuple, da)
+    @test nt == to(NamedTuple, ka)
+    @test nt == to(NamedTuple, nt)
 
-    @inferred namedtuple(aa)
-    @inferred namedtuple(da)
-    @inferred namedtuple(ka)
-    @inferred namedtuple(nt)
+    @inferred to(NamedTuple, aa)
+    @inferred to(NamedTuple, da)
+    @inferred to(NamedTuple, ka)
+    @inferred to(NamedTuple, nt)
 
     arrs = [aa, da, ka, nt]
     for a1 in arrs

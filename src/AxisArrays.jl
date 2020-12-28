@@ -1,8 +1,6 @@
 import AxisArrays
 const AA = AxisArrays
 
-axisarray(o) = to(AA.AxisArray, o)
-
 axissymbol(ax::AA.Axis{s}) where {s} = s
 
 axissymbols(aa::AA.AxisArray) = map(axissymbol, AA.axes(aa))
