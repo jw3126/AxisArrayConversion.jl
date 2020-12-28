@@ -17,12 +17,13 @@ Currently it supports the following formats:
 
 # Supporting more arrays
 
-Conversions between two array types provided by using the path
+Conversions between two array types is provided by using the path
 ```julia
 MyArray -> NamedTuple -> OtherArray
 ```
-This has the advantages, that for `N` array types, only `2N` methods must be implemented
-and also conversion can be implemented between packages that don't know about each other.
+This has multiple advantages:
+* For `N` array types, only `2N` methods must be implemented.
+* Conversion can be implemented between packages that don't know about each other.
 
 In order to support `MyArray`, the following must be implemented:
 
@@ -32,7 +33,7 @@ function AxisArrayConversion.namedtuple(arr::MyArray)
     return (axes=..., values=...)
 end
 
-function myarray(nt::NamedTuple)
+function AxisArrayConversion.from_namedtuple(::Type{MyArray}, nt::NamedTuple)
     ... = nt.axes
     ... = nt.values
     return MyArray(...)
@@ -42,10 +43,11 @@ end
 And now any fancy conversion should work
 ```julia
 using MyArrays, OtherArrays
+using AxisArrayConversion: to
 using Test
 
 ma = MyArrays(...)
-oa = otherarray(ma)
+oa = to(OtherArray, ma)
 @test oa isa OtherArrays.OtherArray
-@test ma == myarray(oa)
+@test ma == to(MyArray, oa)
 ```
