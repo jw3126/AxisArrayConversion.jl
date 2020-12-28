@@ -1,0 +1,13 @@
+name = "AxisArrayConversion"
+uuid = "972ef8a8-2335-4604-a4a0-94f299de4a83"
+authors = ["Jan Weidner <jw3126@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
