@@ -3,6 +3,7 @@ using Test
 import AxisKeys; const AK = AxisKeys
 import AxisArrays; const AA = AxisArrays
 import DimensionalData; const DD = DimensionalData
+using AxisArrayConversion: axisarray, keyedarray, dimarray
 
 @testset "conversion" begin
     axs = (a=1:2, b=[10,20, 30])
@@ -12,7 +13,7 @@ import DimensionalData; const DD = DimensionalData
     aa = axisarray(nt)
     @test aa isa AA.AxisArray
 
-    da = dimarray(nt) # does not infer
+    da = dimarray(nt)
     @test da isa DD.DimArray
 
     ka = keyedarray(nt)
@@ -42,4 +43,24 @@ import DimensionalData; const DD = DimensionalData
     @inferred namedtuple(da)
     @inferred namedtuple(ka)
     @inferred namedtuple(nt)
+
+    arrs = [aa, da, ka, nt]
+    for a1 in arrs
+        for a2 in arrs
+            T = typeof(a1)
+            b1 = to(T, a2)
+            @test b1 isa T
+            @test b1 == a1
+
+            @inferred to(T, a2)
+            # try
+            #     @inferred to(T, a2)
+            # catch err
+            #     @warn """Inference of `to(T, o)` broken for
+            #     T = $T
+            #     typeof(o) = $(typeof(o))
+            #     """
+            # end
+        end
+    end
 end

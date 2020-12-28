@@ -1,6 +1,6 @@
 module AxisArrayConversion
 using Requires
-export namedtuple, dimarray, axisarray, keyedarray
+export namedtuple, to
 
 """
     namedtuple(arr)::NamedTuple{(:axes, :values)}
@@ -8,6 +8,28 @@ export namedtuple, dimarray, axisarray, keyedarray
 Create a `NamedTuple` from an array `arr` with axis data.
 """
 function namedtuple end
+
+
+"""
+    from_namedtuple(::Type{T}, nt::NamedTuple)
+
+Construct an instance of `T` from a `NamedTuple` `nt` with propertynames `(:axes, :values)`.
+"""
+function from_namedtuple(::Type{T}, nt::NamedTuple)::T where {T <:NamedTuple}
+    return nt::T
+end
+
+"""
+    to(SomeArray, ::OtherArray)::SomeArray
+
+Construct an instance of `SomeArray` from an instance of `OtherArray`.
+
+This function should not be overloaded. Instead [`namedtuple`](@ref) and [`from_namedtuple`](@ref) should be overloaded.
+"""
+function to(::Type{T}, o) where {T}
+    nt = namedtuple(o)
+    return from_namedtuple(T,nt)::T
+end
 
 function namedaxes(o)
     return NamedTuple{axissymbols(o)}(axisvalues(o))
@@ -20,16 +42,6 @@ function values(o::NamedTuple)
 end
 function namedtuple(o)
     return (axes=namedaxes(o), values=values(o))
-end
-
-function dimarray(o)
-    return dimarray(namedtuple(o))
-end
-function axisarray(o)
-    return axisarray(namedtuple(o))
-end
-function keyedarray(o)
-    return keyedarray(namedtuple(o))
 end
 
 function __init__()
