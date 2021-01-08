@@ -1,4 +1,4 @@
-import AxisArrays
+import .AxisArrays
 const AA = AxisArrays
 
 axissymbol(ax::AA.Axis{s}) where {s} = s

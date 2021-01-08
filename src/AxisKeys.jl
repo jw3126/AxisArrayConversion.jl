@@ -1,4 +1,4 @@
-import AxisKeys
+import .AxisKeys
 const AK = AxisKeys
 
 function from_namedtuple(::Type{T}, nt::NamedTuple) where {T<:AK.KeyedArray}

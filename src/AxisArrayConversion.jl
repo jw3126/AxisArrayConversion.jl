@@ -9,7 +9,6 @@ Create a `NamedTuple` from an array `arr` with axis data.
 """
 function namedtuple end
 
-
 """
     from_namedtuple(::Type{T}, nt::NamedTuple)
 
@@ -31,6 +30,9 @@ function to(::Type{T}, o) where {T}
     return from_namedtuple(T,nt)::T
 end
 
+################################################################################
+##### Helpers
+################################################################################
 function namedaxes(o)
     return NamedTuple{axissymbols(o)}(axisvalues(o))
 end

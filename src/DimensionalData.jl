@@ -1,4 +1,4 @@
-import DimensionalData
+import .DimensionalData
 const DD = DimensionalData
 
 axissymbol(::DD.Dim{s}) where {s} = s
