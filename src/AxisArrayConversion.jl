@@ -33,6 +33,23 @@ end
 ################################################################################
 ##### Helpers
 ################################################################################
+
+@inline function axissymbol_from_Int(i::Int)
+    return Symbol("x$i")
+end
+
+@generated function axissymbols(arr::AbstractArray{T, dim}) where {T,dim}
+    ntuple(axissymbol_from_Int, dim)
+end
+
+function axisvalues(arr::AbstractArray)
+    Base.axes(arr)
+end
+
+function values(arr::AbstractArray)
+    arr
+end
+
 function namedaxes(o)
     return NamedTuple{axissymbols(o)}(axisvalues(o))
 end
@@ -44,6 +61,24 @@ function values(o::NamedTuple)
 end
 function namedtuple(o)
     return (axes=namedaxes(o), values=values(o))
+end
+
+function _collect(::Type{T}, arr::Array{T}) where {T}
+    arr
+end
+function _collect(::Type{T}, arr::AbstractArray) where {T}
+    collect(T, arr)
+end
+_collect(arr::Array) = arr
+_collect(arr) = collect(arr)
+
+
+function from_namedtuple(Arr::Type{<: Array{T}}, nt::NamedTuple) where {T}
+    _collect(T, nt.values)::Arr
+end
+
+function from_namedtuple(Arr::Type{<: Array}, nt::NamedTuple)
+    _collect(nt.values)::Arr
 end
 
 function __init__()
