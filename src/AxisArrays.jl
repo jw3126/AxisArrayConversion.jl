@@ -10,3 +10,5 @@ values(aa::AA.AxisArray) = parent(aa)
 function from_namedtuple(::Type{T}, nt::NamedTuple) where {T<:AA.AxisArray}
     return AA.AxisArray(nt.values; nt.axes...)::T
 end
+
+roottype(::Type{T}) where {T<:AA.AxisArray} = AA.AxisArray

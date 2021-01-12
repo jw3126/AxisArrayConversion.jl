@@ -9,3 +9,5 @@ values(o::DD.DimensionalArray) = parent(o)
 function from_namedtuple(::Type{T}, nt::NamedTuple) where {T <: DD.DimensionalArray}
     return DD.DimArray(nt.values, nt.axes)::T
 end
+
+roottype(::Type{T}) where {T<:DD.DimensionalArray} = DD.DimensionalArray
