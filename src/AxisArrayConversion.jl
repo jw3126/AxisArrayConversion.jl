@@ -188,7 +188,7 @@ function namedaxes(o)
     return NamedTuple{axissymbols(o)}(axisvalues(o))
 end
 function namedaxes(o::NamedTuple)
-    return o.axes
+    return name_axes(o.axes)
 end
 function values(o::NamedTuple)
     return o.values

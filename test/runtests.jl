@@ -1,4 +1,5 @@
 using AxisArrayConversion: to, AxisArrayConversion
+const AAC = AxisArrayConversion
 using Test
 import AxisKeys; const AK = AxisKeys
 import AxisArrays; const AA = AxisArrays
@@ -9,10 +10,19 @@ doctest(AxisArrayConversion)
 
 @testset "name_axes" begin
     ax = (a=[1,2], b=3:4)
-    @test @inferred(AxisArrayConversion.name_axes(ax)) === ax
+    @test @inferred(AAC.name_axes(ax)) === ax
     ax = (1:2, [3,4], [5,6,10])
     expected = NamedTuple{(:x1,:x2,:x3)}(ax)
-    @test @inferred(AxisArrayConversion.name_axes(ax)) === expected
+    @test @inferred(AAC.name_axes(ax)) === expected
+end
+
+@testset "NamedTuple" begin
+
+    nt = (axes=(a=1:3,), values=[10,20,30])
+    @test AAC.to(NamedTuple, nt) === nt
+
+    nt = (axes=(1:3,), values=[10,20,30])
+    @test AAC.to(NamedTuple, nt) === (axes=(x1=nt.axes[1],), values=nt.values)
 end
 
 @testset "Array" begin
@@ -56,13 +66,12 @@ end
 end
 
 @testset "check_consistency" begin
-    AC = AxisArrayConversion
-    AC.check_consistency((axes=(a=1:2,), values=[1,20]))
-    AC.check_consistency((axes=(1:2,), values=[1,20]))
-    AC.check_consistency((values=[1,20], axes=(a=1:2,)))
-    @test_throws ArgumentError AC.check_consistency((values=[1,20], axes=(a=1:3,)))
-    @test_throws ArgumentError AC.check_consistency((values=[1,20], axes=(a=1:2,b=3:4)))
-    @test_throws ArgumentError AC.check_consistency((values=[1,20], axs=(a=1:2,)))
+    AAC.check_consistency((axes=(a=1:2,), values=[1,20]))
+    AAC.check_consistency((axes=(1:2,), values=[1,20]))
+    AAC.check_consistency((values=[1,20], axes=(a=1:2,)))
+    @test_throws ArgumentError AAC.check_consistency((values=[1,20], axes=(a=1:3,)))
+    @test_throws ArgumentError AAC.check_consistency((values=[1,20], axes=(a=1:2,b=3:4)))
+    @test_throws ArgumentError AAC.check_consistency((values=[1,20], axs=(a=1:2,)))
 end
 
 @testset "to" begin
@@ -112,13 +121,13 @@ end
             @test b1 isa T
             @test b1 == a1
 
-            TUpper = @inferred AxisArrayConversion.roottype(T)
+            TUpper = @inferred AAC.roottype(T)
             @test T <: TUpper
             @test T !== TUpper
             @test to(TUpper, a2) == to(T, a2)
             @test typeof(to(TUpper, a2)) === typeof(to(T, a2))
 
-            AxisArrayConversion.check_consistency(a1)
+            AAC.check_consistency(a1)
 
             @inferred to(T, a2)
             # try
