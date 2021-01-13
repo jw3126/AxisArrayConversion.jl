@@ -4,10 +4,18 @@ export to
 
 const PUBLIC = "This function is part of the public API and subject to SemVer guarantees."
 const PRIVATE = "This function is considered private and may silently change or be removed."
+
 """
     namedtuple(arr)::NamedTuple{(:axes, :values)}
 
 Create a `NamedTuple` from an array `arr` with axis data.
+
+```jldoctest
+julia> using AxisArrayConversion: namedtuple
+
+julia> namedtuple([1 2; 3 4])
+(axes = (x1 = Base.OneTo(2), x2 = Base.OneTo(2)), values = [1 2; 3 4])
+```
 
 $PUBLIC
 """
@@ -28,6 +36,23 @@ end
     to(SomeArray, ::OtherArray)::SomeArray
 
 Construct an instance of `SomeArray` from an instance of `OtherArray`.
+
+# Examples
+```jldoctest
+julia> using AxisArrayConversion: SimpleAxisArray, to
+
+julia> to(SimpleAxisArray, (axes=(a=1:3,), values=[10,20,30]))
+SimpleAxisArray(axes = (a = 1:3,), values = [10, 20, 30])
+
+julia> arr = to(SimpleAxisArray, (axes=(a=1:3,), values=[10,20,30]))
+SimpleAxisArray(axes = (a = 1:3,), values = [10, 20, 30])
+
+julia> to(NamedTuple, arr)
+(axes = (a = 1:3,), values = [10, 20, 30])
+
+julia> to(NamedTuple, [1 2; 3 4])
+(axes = (x1 = Base.OneTo(2), x2 = Base.OneTo(2)), values = [1 2; 3 4])
+```
 
 This function should not be overloaded. Instead [`namedtuple`](@ref) and [`from_namedtuple`](@ref) should be overloaded.
 
@@ -54,6 +79,11 @@ NamedTuple
 $PUBLIC
 """
 roottype(::Type{T}) where {T <: NamedTuple} = NamedTuple
+
+
+@generated function roottype(::Type{T}) where {T <: AbstractArray}
+    getfield(parentmodule(T), nameof(T))
+end
 
 ntfieldnames(::Type{<:NamedTuple{fnames}}) where {fnames} = fnames
 
@@ -155,6 +185,8 @@ end
     name_axes(axes)::NamedTuple
 
 Add names to `axes` or return them as is, if they already have names.
+
+# Examples
 ```jldoctest
 julia> using AxisArrayConversion: name_axes
 
@@ -202,6 +234,45 @@ function __init__()
     @require AxisKeys = "94b1ba4f-4ee9-5380-92f1-94cde586c3c5"   include("AxisKeys.jl")
     @require DimensionalData = "0703355e-b756-11e9-17c0-8b28908087d0" include("DimensionalData.jl")
 
+end
+
+################################################################################
+##### SimpleAxisArray
+################################################################################
+"""
+    SimpleAxisArray
+
+Simple `AxisArray` like type. Meant for demonstrations, testing and as an implementing examples.
+
+$PUBLIC
+"""
+struct SimpleAxisArray{T, N, NT<:NamedTuple, V <: AbstractArray} <: AbstractArray{T,N}
+    axes::NT
+    values::V
+    function SimpleAxisArray(axes::NamedTuple, values::AbstractArray)
+        check_consistency((axes=axes, values=values))
+        NT = typeof(axes)
+        V = typeof(values)
+        T = eltype(values)
+        N = ndims(values)
+        return new{T,N,NT,V}(axes, values)
+    end
+end
+
+SimpleAxisArray(;axes, values) = SimpleAxisArray(axes, values)
+_show(io::IO, sa::SimpleAxisArray) = print(io, "SimpleAxisArray", to(NamedTuple, sa))
+Base.show(io::IO, sa::SimpleAxisArray) = _show(io, sa)
+Base.show(io::IO, ::MIME"text/plain", sa::SimpleAxisArray) = _show(io, sa)
+
+Base.size(arr::SimpleAxisArray) = size(arr.values)
+Base.getindex(arr::SimpleAxisArray, I...) = arr.values[I...]
+
+function namedtuple(o::SimpleAxisArray)
+    return (axes=o.axes, values=o.values)
+end
+
+function from_namedtuple(::Type{T}, nt::NamedTuple) where {T <: SimpleAxisArray}
+    SimpleAxisArray(name_axes(nt.axes), nt.values)
 end
 
 include("Base.jl")

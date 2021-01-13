@@ -113,7 +113,9 @@ end
     @inferred to(NamedTuple, ka)
     @inferred to(NamedTuple, nt)
 
-    arrs = [aa, da, ka, nt]
+    saa = to(AAC.SimpleAxisArray, aa)
+
+    arrs = [aa, da, ka, nt, saa]
     for a1 in arrs
         for a2 in arrs
             T = typeof(a1)

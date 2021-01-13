@@ -8,12 +8,10 @@
 # AxisArrayConversion
 
 [AxisArrayConversion.jl](https://github.com/jw3126/AxisArrayConversion.jl) allows converting between [AxisArrays.jl](https://github.com/JuliaArrays/AxisArrays.jl) like packages.
-Currently it supports the following formats:
 * [AxisArrays.AxisArray](https://github.com/JuliaArrays/AxisArrays.jl)
 * [AxisKeys.KeyedArray](https://github.com/mcabbott/AxisKeys.jl)
 * [DimensionalData.DimArray](https://github.com/rafaqz/DimensionalData.jl)
 * Base.NamedTuple
-
 
 # Supporting more arrays
 
