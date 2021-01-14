@@ -11,6 +11,7 @@
 * [AxisArrays.AxisArray](https://github.com/JuliaArrays/AxisArrays.jl)
 * [AxisKeys.KeyedArray](https://github.com/mcabbott/AxisKeys.jl)
 * [DimensionalData.DimArray](https://github.com/rafaqz/DimensionalData.jl)
+* [AxisArrayConversion.SimpleAxisArray](https://github.com/jw3126/AxisArrayConversion.jl)
 * Base.NamedTuple
 
 # Supporting more arrays

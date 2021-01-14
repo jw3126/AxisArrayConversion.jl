@@ -1,7 +1,7 @@
 name = "AxisArrayConversion"
 uuid = "972ef8a8-2335-4604-a4a0-94f299de4a83"
 authors = ["Jan Weidner <jw3126@gmail.com> and contributors"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
