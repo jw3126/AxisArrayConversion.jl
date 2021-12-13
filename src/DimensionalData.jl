@@ -1,8 +1,6 @@
 import .DimensionalData
 const DD = DimensionalData
 
-
-
 axissymbol(::DD.Dim{s}) where {s} = s
 axissymbols(o::DD.AbstractDimArray) = map(axissymbol, DD.dims(o))
 axisvalues(o::DD.AbstractDimArray) = map(DD.val, DD.val(o))
