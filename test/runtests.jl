@@ -1,28 +1,34 @@
 using AxisArrayConversion: to, AxisArrayConversion
-const AAC = AxisArrayConversion
+const AC = AxisArrayConversion
 using Test
 import AxisKeys; const AK = AxisKeys
 import AxisArrays; const AA = AxisArrays
 import DimensionalData; const DD = DimensionalData
 
-using Documenter: doctest
-doctest(AxisArrayConversion)
+# using Documenter: doctest
+# doctest(AxisArrayConversion)
+
+@testset "AxisArrays" begin
+    aa = AA.AxisArray(10:10:100, xxx=1:10)
+    nt = AC.to(NamedTuple, aa)
+    @test nt === (axes=(xxx=1:10,), values=10:10:100)
+end
 
 @testset "name_axes" begin
     ax = (a=[1,2], b=3:4)
-    @test @inferred(AAC.name_axes(ax)) === ax
+    @test @inferred(AC.name_axes(ax)) === ax
     ax = (1:2, [3,4], [5,6,10])
     expected = NamedTuple{(:x1,:x2,:x3)}(ax)
-    @test @inferred(AAC.name_axes(ax)) === expected
+    @test @inferred(AC.name_axes(ax)) === expected
 end
 
 @testset "NamedTuple" begin
 
     nt = (axes=(a=1:3,), values=[10,20,30])
-    @test AAC.to(NamedTuple, nt) === nt
+    @test AC.to(NamedTuple, nt) === nt
 
     nt = (axes=(1:3,), values=[10,20,30])
-    @test AAC.to(NamedTuple, nt) === (axes=(x1=nt.axes[1],), values=nt.values)
+    @test AC.to(NamedTuple, nt) === (axes=(x1=nt.axes[1],), values=nt.values)
 end
 
 @testset "Array" begin
@@ -66,12 +72,25 @@ end
 end
 
 @testset "check_consistency" begin
-    AAC.check_consistency((axes=(a=1:2,), values=[1,20]))
-    AAC.check_consistency((axes=(1:2,), values=[1,20]))
-    AAC.check_consistency((values=[1,20], axes=(a=1:2,)))
-    @test_throws ArgumentError AAC.check_consistency((values=[1,20], axes=(a=1:3,)))
-    @test_throws ArgumentError AAC.check_consistency((values=[1,20], axes=(a=1:2,b=3:4)))
-    @test_throws ArgumentError AAC.check_consistency((values=[1,20], axs=(a=1:2,)))
+    AC.check_consistency((axes=(a=1:2,), values=[1,20]))
+    AC.check_consistency((axes=(1:2,), values=[1,20]))
+    AC.check_consistency((values=[1,20], axes=(a=1:2,)))
+    @test_throws ArgumentError AC.check_consistency((values=[1,20], axes=(a=1:3,)))
+    @test_throws ArgumentError AC.check_consistency((values=[1,20], axes=(a=1:2,b=3:4)))
+    @test_throws ArgumentError AC.check_consistency((values=[1,20], axs=(a=1:2,)))
+end
+
+
+@testset "DimArray" begin
+    axs = (a=1:2, b=[10,20, 30])
+    nt = (axes=axs, values=(randn(2,3)))
+    da = to(DD.DimArray, nt)
+    @test da isa DD.DimArray
+    nt2 = to(NamedTuple, da)
+    @test AC.axisvalues(da) == Tuple(axs)
+    @test typeof(AC.axisvalues(da)) == typeof(Tuple(axs))
+    @test nt == nt2
+    @test typeof(nt) == typeof(nt2)
 end
 
 @testset "to" begin
@@ -113,33 +132,26 @@ end
     @inferred to(NamedTuple, ka)
     @inferred to(NamedTuple, nt)
 
-    saa = to(AAC.SimpleAxisArray, aa)
+    saa = to(AC.SimpleAxisArray, aa)
 
     arrs = [aa, da, ka, nt, saa]
     for a1 in arrs
         for a2 in arrs
-            T = typeof(a1)
-            b1 = to(T, a2)
-            @test b1 isa T
-            @test b1 == a1
+            @testset "to(::$(typeof(a1)), ::$(typeof(a2))" begin
+                T = typeof(a1)
+                b1 = to(T, a2)
+                @test b1 isa T
+                @test b1 == a1
 
-            TUpper = @inferred AAC.roottype(T)
-            @test T <: TUpper
-            @test T !== TUpper
-            @test to(TUpper, a2) == to(T, a2)
-            @test typeof(to(TUpper, a2)) === typeof(to(T, a2))
+                TUpper = @inferred AC.roottype(T)
+                @test T <: TUpper
+                @test T !== TUpper
+                @test to(TUpper, a2) == to(T, a2)
+                @test typeof(to(TUpper, a2)) === typeof(to(T, a2))
 
-            AAC.check_consistency(a1)
-
-            @inferred to(T, a2)
-            # try
-            #     @inferred to(T, a2)
-            # catch err
-            #     @warn """Inference of `to(T, o)` broken for
-            #     T = $T
-            #     typeof(o) = $(typeof(o))
-            #     """
-            # end
+                AC.check_consistency(a1)
+                @inferred to(T, a2)
+            end
         end
     end
 end
